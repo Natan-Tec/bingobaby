@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Controle do Bingo</title>
+  <link rel="stylesheet" href="bingo.css">
+  <style>
+    #terminarBtn {
+      margin-top: 2em;
+      margin-left: 0;
+      display: block;
+      background: #c00;
+      color: #fff;
+      font-size: 1.2em;
+      padding: 0.6em 2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #terminarBtn[disabled] {
+      background: #888;
+      cursor: not-allowed;
+    }
+    #botoes-area {
+      margin-bottom: 1.5em;
+      display: flex;
+      gap: 2em;
+      align-items: center;
+    }
+    #sortearBtn {
+      font-size: 1.1em;
+      padding: 0.5em 2em;
+    }
+    .palavra {
+      display: inline-block;
+      margin: 4px 8px 4px 0;
+      padding: 6px 14px;
+      border-radius: 7px;
+      background: #eaeaea;
+      font-size: 1em;
+    }
+    .palavra.especial {
+      background: #ffd700;
+      color: #333;
+      font-weight: bold;
+      border: 1.5px solid #bbaa00;
+    }
+    #sorteadasArea {
+      margin-top: 1.5em;
+      margin-bottom: 2em;
+      min-height: 44px;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2.5rem 1rem;
+      max-width: 700px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2em;
+    }
+  </style>
+</head>
+<body>
+  <h2>Controle do Bingo</h2>
+  <div id="botoes-area">
+    <button id="sortearBtn">Sortear</button>
+    <span id="restantesInfo" style="font-size:1.1em; color:#888;"></span>
+  </div>
+  <div id="sorteadasArea"></div>
+  <button id="terminarBtn" style="display:none;">TERMINAR</button>
+  <script>
+    const palavrasEspeciais = [
+      "FraldasMágicas", "LembrançasDoces", "AnjinhoAzul", "FlorCorDeRosa", "CháDeAmor",
+      "PequenoTesouro", "RisoDeAnjo", "MimoDeFofura", "CarinhoEterno", "BeijoDePapai",
+      "AbraçoDeMamãe", "SonhoDourado", "PéDeAnjo", "EstrelinhaCintilante", "BolinhasDeSabão",
+      "DoceEspera", "SonecaTranquila", "DocinhoDeLeite", "BrilhoNosOlhos", "ToqueDeMãe",
+      "PasseioNoParque", "AbraçoQuentinho", "CantinhoAconchegante", "PequeninoAmoroso", "SonhoMágico",
+      "MeuAnjinho", "Chupetinha", "MissãoAmorosa", "SorrisoLindo", "CantigaDeNinar",
+      "NuvemDeAlgodão", "Fofurinha", "PequenoMilagre", "EstrelinhaDoMar", "CarinhoDoPai",
+      "MimoDePapai", "PequenaBorboleta", "BerçoDeSonhos", "DoceAbraço", "BrisaSuave",
+      "PequeninaFlor", "ColinhoQuentinho", "SorrisoDoce", "MeuDocinho", "PequeninoFimDeSemana",
+      "MadrugadaSilenciosa", "PequenoSussurro", "AbraçoDeAnjo", "CháDeEsperança", "MãeEAmor",
+      "Pastelzinho", "ChamaDaVida", "VestidoDeBaile", "CarinhoDoce", "LuaDeMel"
+    ];
+    const palavrasComuns = [
+      "Chupeta","Babador","Mamadeira","Fralda","Berço","Banheira","Lenço",
+      "Cólica","Soneca","Mamãe","Papinha","Carrinho","Trocador","Molho","Pomada",
+      "Body","Mijão","Chocalho","Leite","Vovó","Vovô","Madrinha","Padrinho","Sono",
+      "Berço","Carrinho","Farmacinha","Banho","Soninho","Bebê","Fralda",
+      "Pijama", "Coleira", "Cobertor", "Toalha", "Brinquedo",
+      "Lalá", "Naninha", "Fraldinha", "Gorrinho", "Mordedor", "Babá", "Ultrassom",
+      "Cegonha", "Lembrancinha", "Banho", "Cordão", "Mordedor", "Papo",
+      "Risada", "Cuidados"
+    ];
+
+    // Junta todas as palavras e remove duplicatas
+    const palavrasUnicas = Array.from(new Set([...palavrasComuns, ...palavrasEspeciais]));
+
+    // Cria um conjunto para identificar palavras especiais
+    const palavrasEspeciaisSet = new Set(palavrasEspeciais);
+
+    let palavrasRestantes, sorteadas;
+
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function reiniciarSorteio() {
+      palavrasRestantes = palavrasUnicas.slice();
+      embaralhar(palavrasRestantes);
+      sorteadas = [];
+      render();
+    }
+
+    function render() {
+      const sorteadasArea = document.getElementById('sorteadasArea');
+      const btnSortear = document.getElementById('sortearBtn');
+      const btnTerminar = document.getElementById('terminarBtn');
+      sorteadasArea.innerHTML = '';
+      sorteadas.forEach(palavra => {
+        const span = document.createElement('span');
+        span.textContent = palavra;
+        span.className = 'palavra' + (palavrasEspeciaisSet.has(palavra) ? ' especial' : '');
+        sorteadasArea.appendChild(span);
+      });
+      document.getElementById('restantesInfo').textContent = `Restam: ${palavrasRestantes.length}`;
+      btnSortear.disabled = palavrasRestantes.length === 0;
+      btnTerminar.style.display = palavrasRestantes.length === 0 ? "block" : "none";
+    }
+
+    document.getElementById('sortearBtn').onclick = () => {
+      if (palavrasRestantes.length === 0) return;
+      const palavra = palavrasRestantes.pop();
+      sorteadas.push(palavra);
+      render();
+    };
+
+    document.getElementById('terminarBtn').onclick = () => {
+      reiniciarSorteio();
+    };
+
+    // Inicializa
+    reiniciarSorteio();
+  </script>
+</body>
+</html>

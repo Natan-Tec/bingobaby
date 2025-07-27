@@ -1,0 +1,42 @@
+body {
+  background: #f9f9f9;
+}
+
+#botoes-area {
+  margin-bottom: 1.5em;
+  display: flex;
+  gap: 2em;
+  align-items: center;
+}
+
+#sortearBtn, #terminarBtn {
+  font-size: 1.1em;
+  padding: 0.5em 2em;
+}
+
+.palavra {
+  display: inline-block;
+  margin: 4px 8px 4px 0;
+  padding: 6px 14px;
+  border-radius: 7px;
+  background: #eaeaea;
+  font-size: 1em;
+}
+
+.palavra.especial {
+  background: #ffd700;
+  color: #333;
+  font-weight: bold;
+  border: 1.5px solid #bbaa00;
+}
+
+#sorteadasArea {
+  margin-top: 1.5em;
+  margin-bottom: 2em;
+  min-height: 44px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2em;
+}
